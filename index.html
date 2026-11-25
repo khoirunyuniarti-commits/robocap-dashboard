@@ -3,55 +3,188 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Robocap Monitoring Dashboard - TPI BSD</title>
-  <!-- Tailwind CSS -->
+  <title>Robocap Operations — Grab Indonesia</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- PapaParse untuk membaca CSV Google Sheets -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <style>
+    .grab-gradient { background: linear-gradient(135deg, #00B14F 0%, #007A33 100%); }
+  </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
-    <div>
-      <h1 class="text-xl font-bold text-emerald-400">Robocap Operations Monitoring</h1>
-      <p class="text-xs text-slate-400">TPI BSD • Automotive and Transport</p>
-    </div>
-    <div class="flex items-center gap-3">
-      <span id="lastUpdated" class="text-xs text-slate-400">Memuat data...</span>
-      <button onclick="loadData()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition">
-        Refresh Data
-      </button>
-    </div>
-  </header>
+  <!-- Navbar -->
+  <nav class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('home')">
+        <div class="w-9 h-9 rounded-lg grab-gradient flex items-center justify-center font-extrabold text-white text-lg shadow-lg shadow-emerald-500/20">
+          G
+        </div>
+        <div>
+          <span class="font-bold text-lg tracking-tight text-white">ROBOCAP</span>
+          <span class="text-xs block text-emerald-400 font-medium -mt-1">Powered by Grab Operations</span>
+        </div>
+      </div>
 
-  <main class="max-w-7xl mx-auto p-6 space-y-6">
+      <div class="flex items-center gap-2 sm:gap-4">
+        <button id="navHome" onclick="switchView('home')" class="px-3 py-2 rounded-lg text-sm font-medium bg-slate-800 text-emerald-400 transition">
+          Pengenalan Robocap
+        </button>
+        <button id="navDash" onclick="switchView('dashboard')" class="px-4 py-2 rounded-lg text-sm font-semibold grab-gradient text-white hover:opacity-90 transition shadow-md shadow-emerald-600/20">
+          Dashboard Monitoring →
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== VIEW 1: LANDING PAGE (PENGERTIAN ROBOCAP & GRAB) ==================== -->
+  <section id="viewHome" class="flex-1">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden border-b border-slate-800 bg-gradient-to-b from-slate-900 to-slate-950">
+      <div class="max-w-7xl mx-auto px-6 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            GRAB INDONESIA • FLEET & AUTOMOTIVE OPERATIONS
+          </div>
+          <h1 class="text-4xl sm:text-5xl font-extrabold text-white leading-tight">
+            Sistem Dokumentasi & Pemantauan Visual <span class="text-emerald-400">Robocap</span>
+          </h1>
+          <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+            <strong>Robocap</strong> adalah inisiatif pengambilan data visual berbasis kamera sudut pandang pertama (<em>first-person POV</em>) di lingkungan operasional <strong>Grab</strong> (TPI BSD — Automotive & Transport). Sistem ini merekam setiap tahapan pengerjaan teknis secara presisi untuk standardisasi SOP, audit kualitas, serta pengembangan kecerdasan buatan (AI).
+          </p>
+          <div class="flex flex-wrap gap-4 pt-2">
+            <button onclick="switchView('dashboard')" class="px-6 py-3.5 rounded-xl grab-gradient text-white font-bold text-sm shadow-lg shadow-emerald-500/25 hover:scale-[1.02] transition">
+              Buka Dashboard Monitoring
+            </button>
+            <a href="#lini-operasional" class="px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 transition">
+              Pelajari Alur Kerja
+            </a>
+          </div>
+        </div>
+
+        <!-- Info Card Highlight -->
+        <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-2xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div>
+              <p class="text-xs text-slate-400 uppercase">Lokasi Operasional</p>
+              <p class="font-bold text-white text-lg">TPI BSD — Grab Fleet Hub</p>
+            </div>
+            <span class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-bold">L1: Automotive</span>
+          </div>
+          <div class="space-y-4 text-sm">
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold shrink-0">1</div>
+              <div>
+                <p class="font-semibold text-white">Capture & Multi-Camera Sync</p>
+                <p class="text-slate-400 text-xs">Perekaman aktivitas menggunakan perangkat <em>Bitrate Clone Mirror</em>, <em>Engine Phobos Bolt</em>, dan <em>Portal Zero Steam</em>.</p>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold shrink-0">2</div>
+              <div>
+                <p class="font-semibold text-white">Pelacakan Durasi & Kapasitas Data</p>
+                <p class="text-slate-400 text-xs">Pengukuran otomatis durasi aktual pengerjaan (<em>Actual Record</em>) dan volume data yang terkumpul (<em>GB Collected</em>).</p>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold shrink-0">3</div>
+              <div>
+                <p class="font-semibold text-white">Transparansi Performa Tim</p>
+                <p class="text-slate-400 text-xs">Pemantauan produktivitas teknisi di setiap divisi secara terpusat melalui dashboard real-time.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lini Operasional Robocap -->
+    <div id="lini-operasional" class="max-w-7xl mx-auto px-6 py-16 space-y-10">
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Lini Operasional & Cakupan Area</h2>
+        <p class="text-slate-400 text-sm">Robocap mencakup seluruh divisi perawatan dan perbaikan armada kendaraan operasional Grab.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-emerald-500/50 transition">
+          <div class="text-emerald-400 font-bold text-sm mb-2">01. Mechanical Repairs</div>
+          <p class="text-xs text-slate-400 leading-relaxed">Perbaikan mesin, alternator, tune-up, radiator, sistem kemudi (steering rack), pompa bahan bakar, dan kelistrikan.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-emerald-500/50 transition">
+          <div class="text-sky-400 font-bold text-sm mb-2">02. Bodywork Repairs</div>
+          <p class="text-xs text-slate-400 leading-relaxed">Pendempulan, pengamplasan (sanding), pemolesan bodi, pemasangan bumper, reflektor, dan interior trim.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-emerald-500/50 transition">
+          <div class="text-amber-400 font-bold text-sm mb-2">03. Tire & Spooring</div>
+          <p class="text-xs text-slate-400 leading-relaxed">Penggantian ban manual maupun mesin, balancing, serta penyelarasan roda (spooring) armada.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-emerald-500/50 transition">
+          <div class="text-purple-400 font-bold text-sm mb-2">04. Car Wash & Deep Clean</div>
+          <p class="text-xs text-slate-400 leading-relaxed">Pencucian eksterior menyeluruh, coating, serta pembersihan mendalam (teardown deep cleaning) kabin kendaraan.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-emerald-500/50 transition">
+          <div class="text-rose-400 font-bold text-sm mb-2">05. AC Repairs</div>
+          <p class="text-xs text-slate-400 leading-relaxed">Pemeriksaan, perawatan, dan perbaikan sistem pendingin kabin untuk kenyamanan mitra dan penumpang.</p>
+        </div>
+      </div>
+
+      <!-- Call to Action Bottom -->
+      <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div>
+          <h3 class="text-xl font-bold text-white">Siap Memantau Performa Sesi Rekaman?</h3>
+          <p class="text-sm text-slate-400 mt-1">Lihat statistik durasi rekaman, total kapasitas GB terkumpul, dan log detail tiap operator.</p>
+        </div>
+        <button onclick="switchView('dashboard')" class="px-6 py-3 rounded-xl grab-gradient text-white font-bold text-sm whitespace-nowrap shadow-lg shadow-emerald-500/20">
+          Masuk ke Dashboard →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== VIEW 2: DASHBOARD MONITORING ==================== -->
+  <section id="viewDashboard" class="hidden flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+
+    <!-- Status & Data Source Bar -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-wrap justify-between items-center gap-4">
+      <div>
+        <h2 class="text-lg font-bold text-white">Dashboard Monitoring Operasional</h2>
+        <p id="dataStatus" class="text-xs text-emerald-400 mt-0.5">Menghubungkan ke Google Sheets...</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-medium px-3 py-2 rounded-lg transition">
+          📂 Upload CSV Manual
+          <input type="file" accept=".csv" onchange="handleFileUpload(event)" class="hidden" />
+        </label>
+        <button onclick="loadFromGoogleSheet()" class="grab-gradient text-white text-xs font-semibold px-3.5 py-2 rounded-lg hover:opacity-90 transition">
+          ↻ Sinkron Google Sheets
+        </button>
+      </div>
+    </div>
 
     <!-- Filter Bar -->
-    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Filter Tanggal (Date Record)</label>
-        <select id="filterDate" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm">
+        <label class="block text-xs text-slate-400 mb-1">Tanggal (Date Record)</label>
+        <select id="filterDate" onchange="applyFilters()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
           <option value="ALL">Semua Tanggal</option>
         </select>
       </div>
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Filter Area</label>
-        <select id="filterArea" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm">
+        <label class="block text-xs text-slate-400 mb-1">Area Operasional</label>
+        <select id="filterArea" onchange="applyFilters()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
           <option value="ALL">Semua Area</option>
         </select>
       </div>
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Filter Operator</label>
-        <select id="filterOperator" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm">
+        <label class="block text-xs text-slate-400 mb-1">Operator</label>
+        <select id="filterOperator" onchange="applyFilters()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
           <option value="ALL">Semua Operator</option>
         </select>
       </div>
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Filter Kamera</label>
-        <select id="filterCamera" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm">
+        <label class="block text-xs text-slate-400 mb-1">Perangkat Kamera</label>
+        <select id="filterCamera" onchange="applyFilters()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
           <option value="ALL">Semua Kamera</option>
         </select>
       </div>
@@ -59,45 +192,45 @@
 
     <!-- KPI Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
+      <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
         <p class="text-xs text-slate-400 uppercase tracking-wider">Total Sesi Rekaman</p>
         <p id="kpiSessions" class="text-3xl font-bold text-white mt-2">0</p>
       </div>
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
+      <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
         <p class="text-xs text-slate-400 uppercase tracking-wider">Total Actual Record</p>
         <p id="kpiDuration" class="text-3xl font-bold text-emerald-400 mt-2">0j 0m</p>
       </div>
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
+      <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
         <p class="text-xs text-slate-400 uppercase tracking-wider">Total GB Collected</p>
         <p id="kpiGB" class="text-3xl font-bold text-sky-400 mt-2">0 GB</p>
       </div>
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
+      <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
         <p class="text-xs text-slate-400 uppercase tracking-wider">Operator Aktif</p>
         <p id="kpiOperators" class="text-3xl font-bold text-amber-400 mt-2">0</p>
       </div>
     </div>
 
-    <!-- Charts Section -->
+    <!-- Charts -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
-        <h2 class="text-sm font-semibold text-slate-200 mb-4">Total GB Collected per Area</h2>
+      <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+        <h3 class="text-sm font-semibold text-slate-200 mb-4">Total GB Collected per Area</h3>
         <canvas id="areaChart" height="220"></canvas>
       </div>
-      <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
-        <h2 class="text-sm font-semibold text-slate-200 mb-4">Jumlah Sesi per Operator</h2>
+      <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+        <h3 class="text-sm font-semibold text-slate-200 mb-4">Distribusi Sesi per Operator</h3>
         <canvas id="operatorChart" height="220"></canvas>
       </div>
     </div>
 
-    <!-- Data Table -->
-    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-      <div class="p-4 border-b border-slate-700 flex justify-between items-center">
-        <h2 class="text-sm font-semibold text-slate-200">Detail Log Rekaman</h2>
-        <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="Cari sesi atau aktivitas..." class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs w-64" />
+    <!-- Table -->
+    <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+      <div class="p-4 border-b border-slate-800 flex flex-wrap justify-between items-center gap-3">
+        <h3 class="text-sm font-semibold text-slate-200">Detail Log Rekaman Sesi</h3>
+        <input type="text" id="searchInput" onkeyup="applyFilters()" placeholder="Cari aktivitas atau operator..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs w-64 text-white" />
       </div>
       <div class="overflow-x-auto max-h-96">
         <table class="w-full text-left border-collapse text-xs">
-          <thead class="bg-slate-900/80 text-slate-400 sticky top-0">
+          <thead class="bg-slate-950 text-slate-400 sticky top-0">
             <tr>
               <th class="p-3">Tanggal</th>
               <th class="p-3">Session Name</th>
@@ -108,26 +241,55 @@
               <th class="p-3">GB Collected</th>
             </tr>
           </thead>
-          <tbody id="tableBody" class="divide-y divide-slate-700/60"></tbody>
+          <tbody id="tableBody" class="divide-y divide-slate-800/70"></tbody>
         </table>
       </div>
     </div>
 
-  </main>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-900/50 py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-2">
+      <p>© 2026 Grab Indonesia — Robocap Operations Monitoring (TPI BSD)</p>
+      <p>Internal Operations & Quality Assurance Portal</p>
+    </div>
+  </footer>
 
   <script>
-    // GANTI URL DI BAWAH INI DENGAN LINK CSV DARI PUBLISH TO WEB GOOGLE SHEETS ANDA
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/18yecRIYXvia51cQcoq6geuCly1HkkoLue88NNDyZ12M/gviz/tq?tqx=out:csv&gid=1990983714";
+    // Link CSV Publik Google Sheets Anda
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSNOGF1Uzs49rAExLT-pVNEfaeGToO_NbaP8VRL43arEpsn3jqgoiG6YHzNo8KwqodzbyAPIFOgIIZa/pub?gid=1990983714&single=true&output=csv";
 
     let rawData = [];
     let areaChartInstance = null;
     let operatorChartInstance = null;
 
+    function switchView(view) {
+      const home = document.getElementById('viewHome');
+      const dash = document.getElementById('viewDashboard');
+      const navHome = document.getElementById('navHome');
+      const navDash = document.getElementById('navDash');
+
+      if (view === 'home') {
+        home.classList.remove('hidden');
+        dash.classList.add('hidden');
+        navHome.className = "px-3 py-2 rounded-lg text-sm font-medium bg-slate-800 text-emerald-400 transition";
+        navDash.className = "px-4 py-2 rounded-lg text-sm font-semibold grab-gradient text-white hover:opacity-90 transition shadow-md shadow-emerald-600/20";
+      } else {
+        home.classList.add('hidden');
+        dash.classList.remove('hidden');
+        navHome.className = "px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition";
+        navDash.className = "px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-600 text-white transition";
+        applyFilters();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function parseDurationToSeconds(timeStr) {
       if (!timeStr) return 0;
       const parts = timeStr.trim().split(':').map(Number);
-      if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-      if (parts.length === 2) return parts[0] * 60 + parts[1];
+      if (parts.length === 3) return (parts[0] || 0) * 3600 + (parts[1] || 0) * 60 + (parts[2] || 0);
+      if (parts.length === 2) return (parts[0] || 0) * 60 + (parts[1] || 0);
       return 0;
     }
 
@@ -137,38 +299,63 @@
       return `${h}j ${m}m`;
     }
 
-    function loadData() {
-      document.getElementById('lastUpdated').innerText = "Mengambil data terbaru...";
+    function loadFromGoogleSheet() {
+      document.getElementById('dataStatus').innerText = "Mencoba menghubungkan ke Google Sheets...";
       Papa.parse(SHEET_CSV_URL, {
         download: true,
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-          rawData = results.data.filter(row => row['Session Name']);
-          populateFilters(rawData);
-          applyFilters();
-          const now = new Date().toLocaleTimeString('id-ID');
-          document.getElementById('lastUpdated').innerText = `Terakhir diperbarui: ${now}`;
+          const validRows = results.data.filter(r => r['Session Name']);
+          if (validRows.length > 0) {
+            rawData = validRows;
+            populateFilters(rawData);
+            applyFilters();
+            const now = new Date().toLocaleTimeString('id-ID');
+            document.getElementById('dataStatus').innerText = `Terhubung Live ke Google Sheets • ${rawData.length} sesi (Diperbarui: ${now})`;
+          } else {
+            document.getElementById('dataStatus').innerText = "Data kosong atau kolom 'Session Name' tidak ditemukan.";
+          }
         },
         error: function(err) {
-          alert("Gagal memuat data. Pastikan Google Sheets sudah di-Publish to Web atau akses link terbuka.");
+          document.getElementById('dataStatus').innerText = "Gagal memuat CSV dari Google Sheets. Coba refresh atau upload CSV manual.";
           console.error(err);
         }
       });
     }
 
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          const validRows = results.data.filter(r => r['Session Name']);
+          if (validRows.length > 0) {
+            rawData = validRows;
+            populateFilters(rawData);
+            applyFilters();
+            document.getElementById('dataStatus').innerText = `Data dimuat dari file: ${file.name} (${rawData.length} sesi)`;
+          } else {
+            alert("Format CSV tidak sesuai.");
+          }
+        }
+      });
+    }
+
     function populateFilters(data) {
-      const fillSelect = (id, key) => {
+      const fillSelect = (id, key, labelAll) => {
         const select = document.getElementById(id);
         const current = select.value;
         const unique = [...new Set(data.map(r => r[key]).filter(Boolean))].sort();
-        select.innerHTML = `<option value="ALL">Semua</option>` + unique.map(v => `<option value="${v}">${v}</option>`).join('');
+        select.innerHTML = `<option value="ALL">${labelAll}</option>` + unique.map(v => `<option value="${v}">${v}</option>`).join('');
         if (unique.includes(current)) select.value = current;
       };
-      fillSelect('filterDate', 'Date Record');
-      fillSelect('filterArea', 'Area Name');
-      fillSelect('filterOperator', 'Operator Name');
-      fillSelect('filterCamera', 'Camera Name');
+      fillSelect('filterDate', 'Date Record', 'Semua Tanggal');
+      fillSelect('filterArea', 'Area Name', 'Semua Area');
+      fillSelect('filterOperator', 'Operator Name', 'Semua Operator');
+      fillSelect('filterCamera', 'Camera Name', 'Semua Kamera');
     }
 
     function applyFilters() {
@@ -204,7 +391,6 @@
     }
 
     function updateCharts(data) {
-      // Group by Area (GB)
       const areaMap = {};
       data.forEach(r => {
         const area = r['Area Name'] || 'Lainnya';
@@ -219,14 +405,13 @@
           datasets: [{
             label: 'GB Collected',
             data: Object.values(areaMap).map(v => v.toFixed(2)),
-            backgroundColor: '#10b981',
+            backgroundColor: '#00B14F',
             borderRadius: 6
           }]
         },
         options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8' } }, y: { ticks: { color: '#94a3b8' } } } }
       });
 
-      // Group by Operator (Sessions)
       const opMap = {};
       data.forEach(r => {
         const op = (r['Operator Name'] || 'Unknown').split('(')[0].trim();
@@ -240,7 +425,7 @@
           labels: Object.keys(opMap),
           datasets: [{
             data: Object.values(opMap),
-            backgroundColor: ['#10b981', '#0ea5e9', '#f59e0b', '#8b5cf6', '#ec4899', '#64748b', '#14b8a6', '#f43f5e']
+            backgroundColor: ['#00B14F', '#0ea5e9', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f43f5e', '#64748b']
           }]
         },
         options: { plugins: { legend: { position: 'right', labels: { color: '#cbd5e1', boxWidth: 12 } } } }
@@ -250,20 +435,21 @@
     function updateTable(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = data.map(r => `
-        <tr class="hover:bg-slate-700/40">
-          <td class="p-3 whitespace-nowrap">${r['Date Record'] || '-'}</td>
-          <td class="p-3 font-medium text-slate-200">${r['Session Name'] || '-'}</td>
-          <td class="p-3 whitespace-nowrap">${r['Operator Name'] || '-'}</td>
-          <td class="p-3 whitespace-nowrap"><span class="bg-slate-700 px-2 py-0.5 rounded text-emerald-300">${r['Area Name'] || '-'}</span></td>
+        <tr class="hover:bg-slate-800/50">
+          <td class="p-3 whitespace-nowrap text-slate-300">${r['Date Record'] || '-'}</td>
+          <td class="p-3 font-medium text-white">${r['Session Name'] || '-'}</td>
+          <td class="p-3 whitespace-nowrap text-slate-300">${r['Operator Name'] || '-'}</td>
+          <td class="p-3 whitespace-nowrap"><span class="bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded text-emerald-400">${r['Area Name'] || '-'}</span></td>
           <td class="p-3 whitespace-nowrap text-slate-400">${r['Camera Name'] || '-'}</td>
-          <td class="p-3 whitespace-nowrap font-mono">${r['Actual Record'] || '-'}</td>
-          <td class="p-3 whitespace-nowrap font-mono text-sky-400">${r['GB Collected (minutes)'] || '0'}</td>
+          <td class="p-3 whitespace-nowrap font-mono text-slate-200">${r['Actual Record'] || '-'}</td>
+          <td class="p-3 whitespace-nowrap font-mono text-sky-400 font-semibold">${r['GB Collected (minutes)'] || '0'}</td>
         </tr>
       `).join('');
     }
 
-    // Load saat halaman dibuka
-    window.onload = loadData;
+    window.onload = function() {
+      loadFromGoogleSheet();
+    };
   </script>
 </body>
 </html>
